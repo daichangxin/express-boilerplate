@@ -1,4 +1,4 @@
-FROM node:16-alpine3.17 as builder
+FROM node:20-alpine3.17 as builder
 
 WORKDIR /app
 COPY package*.json .npmrc /app/
@@ -10,7 +10,7 @@ RUN rm -rf node_modules
 
 RUN yarn install --production
 
-FROM node:16-alpine3.17
+FROM node:20-alpine3.17
 WORKDIR /app
 COPY --from=builder /app/node_modules node_modules
 COPY --from=builder /app/dist dist
