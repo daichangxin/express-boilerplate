@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import httpStatus from 'http-status';
 import xss from 'xss-clean';
 import { converToAPIError, handleAPIError } from './middleware/error';
+import { requestIdMiddleware } from './middleware/requestIdMiddleware';
 import { APIError } from './utils/apiError';
 import compressFilter from './utils/compressFilter.util';
 
@@ -28,6 +29,8 @@ app.use(compression({ filter: compressFilter }));
 // enable cors
 app.use(cors());
 app.options('*', cors());
+
+app.use(requestIdMiddleware);
 
 app.get('/', (_req: Request, res: Response) => {
     res.send('Hello World!');
