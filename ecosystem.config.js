@@ -1,8 +1,10 @@
+
 module.exports = {
     apps: [
         {
             name: 'express-boilerplate-service',
-            script: './dist/src/index.js',
+            script: 'yarn',
+            args: 'start',
             instances: 1,
             autorestart: true,
             watch: false,

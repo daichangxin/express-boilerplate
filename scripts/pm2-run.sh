@@ -1,1 +1,1 @@
-pm2 start npm --name express-boilerplate-service -- run start
+pm2 start
