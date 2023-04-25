@@ -1,26 +1,45 @@
-import express, { Express, Request, Response } from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
 import compression from 'compression';
+import cors from 'cors';
+import express, { Express, Request, Response } from 'express';
+import helmet from 'helmet';
+import httpStatus from 'http-status';
+import xss from 'xss-clean';
+import { converToAPIError, handleAPIError } from './middleware/error';
+import { APIError } from './utils/apiError';
 import compressFilter from './utils/compressFilter.util';
-import { config } from './config';
 
 export const app: Express = express();
 
-app.use(
-    cors({
-        // origin is given a array if we want to have multiple origins later
-        origin: [config.cors_origin],
-        credentials: true,
-    })
-);
-
-// Helmet is used to secure this app by configuring the http-header
+// set security HTTP headers
 app.use(helmet());
 
-// Compression is used to reduce the size of the response body
+// parse json request body
+app.use(express.json());
+
+// parse urlencoded request body
+app.use(express.urlencoded({ extended: true }));
+
+// sanitize request data
+app.use(xss());
+
+// gzip compression
 app.use(compression({ filter: compressFilter }));
+
+// enable cors
+app.use(cors());
+app.options('*', cors());
 
 app.get('/', (_req: Request, res: Response) => {
     res.send('Hello World!');
 });
+
+// send back a 404 error for any unknown api request
+app.use((req, res, next) => {
+    next(new APIError(httpStatus.NOT_FOUND, 'Not found'));
+});
+
+// convert error to ApiError, if needed
+app.use(converToAPIError);
+
+// handle error
+app.use(handleAPIError);
