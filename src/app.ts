@@ -7,6 +7,7 @@ import xss from 'xss-clean';
 import { converToAPIError, handleAPIError } from './middleware/error';
 import { APIError } from './utils/apiError';
 import compressFilter from './utils/compressFilter.util';
+import { apiRoutes } from './route/apiRoutes';
 
 export const app: Express = express();
 
@@ -29,6 +30,7 @@ app.use(compression({ filter: compressFilter }));
 app.use(cors());
 app.options('*', cors());
 
+app.use('/api', apiRoutes);
 app.get('/', (_req: Request, res: Response) => {
     res.send('Hello World!');
 });
